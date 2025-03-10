@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/./frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/./frontend/generated/jar-resources",
+  "staticOutput": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/target/classes/META-INF/VAADIN/config",
+  "frontendBundleOutput": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/target/classes/META-INF/VAADIN/webapp",
+  "devBundleOutput": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/src/main/dev-bundle/webapp",
+  "devBundleStatsOutput": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/src/main/dev-bundle/config",
+  "jarResourcesFolder": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/./frontend/generated/jar-resources",
+  "themeName": "",
+  "clientServiceWorkerSource": "/Users/chenliu/IdeaProjects/Spring-Boot-3-MariaDB/target/sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
