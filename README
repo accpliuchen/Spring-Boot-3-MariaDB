@@ -1,0 +1,163 @@
+MaxScale + MariaDB + Spring Boot Setup
+
+Overview
+
+This project sets up a MariaDB MaxScale environment with multiple database servers for read-write splitting, read scaling, and automatic failover. Additionally, it includes a Spring Boot application that connects to the MaxScale proxy for database operations.
+
+MaxScale acts as a proxy and load balancer for MariaDB databases, handling automatic query routing, high availability, and failover management.
+
+Features
+
+Read-Write Splitting: Automatically routes SELECT queries to replica servers and write queries to the primary database.
+
+High Availability: Uses MariaDB-Monitor for automatic failover and mdb_monitor as a backup monitor.
+
+Load Balancing: Distributes read queries across multiple replicas.
+
+Dynamic Service Routing: Supports multiple query routing services (query_router_service).
+
+Spring Boot Integration: Connects to MaxScale for seamless database access.
+
+MaxScale REST API for monitoring and managing connections dynamically.
+
+Architecture
+
+                         +-----------------------+
+                         |  MaxScale (Proxy)    |
+                         |----------------------|
+                         |  - Read-Write Split  |
+                         |  - Read-Only Routing |
+                         |  - Auto Failover     |
+                         |----------------------|
+                         |  Ports: 4000, 4001   |
+                         +----------+----------+
+                                    |
+          +----------------+----------------+
+          |                |                |
+   +------+-----+  +------+-----+  +------+-----+
+   |  Master    |  |  Slave     |  |  Slave     |
+   | server-1   |  | server-2   |  | server-3   |
+   +------------+  +------------+  +------------+
+               |
+         +----------------+
+         | Spring Boot App |
+         | REST API Layer  |
+         | Data Access     |
+         +----------------+
+
+Setup Instructions
+
+1️⃣ Clone the Repository
+
+git clone <repository-url>
+cd maxscale-mariadb-setup
+
+2️⃣ Configure maxscale.cnf
+
+Ensure that maxscale.cnf is correctly set up for your database servers:
+
+[maxscale]
+threads=auto
+admin_host=0.0.0.0
+admin_secure_gui=false
+
+[server-1]
+type=server
+address=server-1
+port=3306
+protocol=MariaDBBackend
+
+[server-2]
+type=server
+address=server-2
+port=3306
+protocol=MariaDBBackend
+
+[server-3]
+type=server
+address=server-3
+port=3306
+protocol=MariaDBBackend
+
+3️⃣ Start the Containers
+
+docker-compose up -d
+
+4️⃣ Verify MaxScale Status
+
+Check if MaxScale is running:
+
+docker exec -it maxscale maxctrl list services
+
+5️⃣ Configure Spring Boot
+
+Modify application.properties to connect to MaxScale:
+
+spring.datasource.url=jdbc:mariadb://maxscale_host:4000/database_name
+spring.datasource.username=maxscale_user
+spring.datasource.password=MaxScalePassword123!
+spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+
+Running the Spring Boot Application
+
+Ensure you have Maven installed, then run:
+
+mvn spring-boot:run
+
+Or, if using Gradle:
+
+gradle bootRun
+
+Verify that the application can connect to MaxScale and perform database queries.
+
+Query Routing Services
+
+1️⃣ Read-Write Service (readwritesplit)
+
+Routes write queries to server-1 (Master).
+
+Routes read queries to available slaves (server-2, server-3).
+
+Connection:
+
+mysql -u maxscale_user -p -h maxscale_host -P 4000
+
+2️⃣ Read-Only Service (readconnroute)
+
+Routes all queries to slave servers (server-2, server-3).
+
+Useful for reporting & analytics.
+
+Connection:
+
+mysql -u maxscale_user -p -h maxscale_host -P 4001
+
+3️⃣ Query Router Service (query_router_service)
+
+Provides an additional SQL access point.
+
+Uses readwritesplit for load balancing and failover.
+
+Connection:
+
+mysql -u maxscale_user -p -h maxscale_host -P 4002
+
+Monitoring & Failover
+
+1️⃣ Check Running Servers
+
+docker exec -it maxscale maxctrl list servers
+
+2️⃣ Manual Failover (Set New Primary)
+
+docker exec -it maxscale maxctrl call command mariadbmon set-primary MariaDB-Monitor server-2
+
+3️⃣ Restart MaxScale Services
+
+docker-compose restart maxscale
+
+Conclusion
+
+This setup ensures high availability, automatic failover, and read-write splitting for MariaDB. With MaxScale, database traffic is managed efficiently, reducing downtime and optimizing read-heavy workloads. Additionally, the Spring Boot integration allows easy application development with a scalable database infrastructure.
+
+🚀 Now you can test and scale your database system with confidence! 🚀
